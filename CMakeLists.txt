@@ -3,4 +3,5 @@ project(AR)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(AR main.cpp)
+add_subdirectory(server)
+add_subdirectory(client)
