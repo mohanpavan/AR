@@ -3,13 +3,12 @@
 
 int main(int argc, char *argv[])
 {
-    ConfigReader config("config.ini");
+    const ConfigReader config("config.ini");
 
-    std::string config_buffer;
-    int port;
-    double frequency;
-    size_t buf_size;
-    std::string server_ip;
+    int port=8080;
+    double frequency = 10;
+    size_t buf_size = 1024;
+    std::string server_ip = "127.0.0.1";
     std::string value;
 
     if (config.getValue("PORT", value))

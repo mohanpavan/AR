@@ -7,17 +7,18 @@
 class Client
 {
 public:
-    Client(const std::string &server_ip, int port, double frequency, size_t b_size);
+    Client(const std::string &server_ip, const int port, const double frequency, const size_t b_size);
     void start();
 
 private:
-    std::string server_ip;
-    int port;
-    double frequency;
-    size_t buf_size;
-
-    void send_motion_control_info(int client_socket, struct sockaddr_in servaddr);
-    void receive_position_data(int client_socket);
+    int m_port;
+    double m_frequency;
+    size_t m_buf_size;
+    std::string m_server_ip;
+    int m_socket;
+    sockaddr_in server_addr{};
+    void send_motion_control_info() const;
+    void receive_position_data() const;
 };
 
 #endif // AR_CLIENT_H

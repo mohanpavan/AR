@@ -7,54 +7,51 @@
 #include <unistd.h>
 #include <cstring>
 
-Client::Client(const std::string &server_ip, int port, double frequency, size_t b_size)
-    : server_ip(server_ip), port(port), frequency(frequency), buf_size(b_size) {}
+Client::Client(const std::string &server_ip, const int port, const double frequency, const size_t b_size)
+    : m_port(port), m_frequency(frequency), m_buf_size(b_size), m_server_ip(server_ip), m_socket(0) {}
 
 void Client::start()
 {
-    int client_socket;
-    struct sockaddr_in servaddr;
-
-    if ((client_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((m_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
         std::cerr << "Socket creation error" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(port);
-    servaddr.sin_addr.s_addr = inet_addr(server_ip.c_str());
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(m_port);
+    server_addr.sin_addr.s_addr = inet_addr(m_server_ip.c_str());
 
-    std::thread send_thread(&Client::send_motion_control_info, this, client_socket, servaddr);
-    std::thread receive_thread(&Client::receive_position_data, this, client_socket);
+    std::thread send_thread(&Client::send_motion_control_info, this);
+    std::thread receive_thread(&Client::receive_position_data, this);
 
     send_thread.join();
     receive_thread.join();
 
-    close(client_socket);
+    close(m_socket);
 }
 
-void Client::send_motion_control_info(int client_socket, struct sockaddr_in servaddr)
+void Client::send_motion_control_info() const
 {
     int motion_control = 0;
     while (true)
     {
         std::string message = "Motion Control: " + std::to_string(motion_control);
-        sendto(client_socket, message.c_str(), message.length(),
-               MSG_CONFIRM, (const struct sockaddr *)&servaddr, sizeof(servaddr));
-        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000.0 / frequency)));
+        sendto(m_socket, message.c_str(), message.length(),
+               MSG_CONFIRM, (const struct sockaddr *)&server_addr, sizeof(server_addr));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000.0 / m_frequency)));
         motion_control++;
     }
 }
 
-void Client::receive_position_data(int client_socket)
+void Client::receive_position_data() const
 {
-    char buffer[buf_size] = {0};
+    char buffer[m_buf_size] = {0};
     int last_position = -1;
     while (true)
     {
-        int n = recvfrom(client_socket, buffer, buf_size,
+        const size_t n = recvfrom(m_socket, buffer, m_buf_size,
                          MSG_WAITALL, nullptr, nullptr);
         buffer[n] = '\0';
         std::cout << "Server : " << buffer << std::endl;

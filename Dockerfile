@@ -10,11 +10,8 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     cmake \
     g++
 
-# Copy the entire project
-COPY . /app
+COPY . /udp
 
-# Build the project
-WORKDIR /app
-RUN mkdir build_dock && cd build_dock && cmake .. && make
+WORKDIR /udp
 
-# CMD ["ls -l ./build_dock/server", "./build_dock/server/server"]
+RUN cmake -S . -B build && cmake --build build && cmake --install build
