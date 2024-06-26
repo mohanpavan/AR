@@ -3,19 +3,32 @@
 #define AR_SERVER_H
 
 #include <netinet/in.h>
+#include <functional>
+#include <string>
+#include <thread>
 
 class Server
 {
 public:
-    Server(int port, double frequency, size_t b_size);
+    using CallbackType = std::function<void(const std::string&)>;
+    Server(const int port, const double frequency, const size_t b_size);
+    virtual ~Server();
     void start();
+    void stop();
+    void set_callback(CallbackType callback);
 
 private:
-    int port;
-    double frequency;
-    size_t buf_size;
+    void receive_and_send_data();
 
-    void receive_and_send_data(int server_socket);
+    int m_port;
+    double m_frequency;
+    size_t m_buf_size;
+    int m_socket;
+    sockaddr_in m_server_addr{};
+    sockaddr_in m_client_addr{};
+    CallbackType m_callback;
+    std::thread m_server_thread;
+    bool m_running;
 };
 
 #endif // AR_SERVER_H

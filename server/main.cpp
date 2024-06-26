@@ -1,13 +1,17 @@
 #include "server.h"
 #include "config_reader.h"
 
+void data_received_callback(const std::string& data) {
+    std::cout << "--Server: Position: " << data << std::endl;
+}
+
 int main()
 {
-    ConfigReader config("config.ini");
+    const ConfigReader config("config.ini");
 
-    int port;
-    double frequency;
-    size_t buf_size;
+    int port = 8080;
+    double frequency = .1F;
+    size_t buf_size = 1024;
     std::string value;
 
     if (config.getValue("PORT", value))
@@ -41,7 +45,10 @@ int main()
     }
 
     Server server(port, frequency, buf_size);
+    // server.set_callback(data_received_callback);
     server.start();
+    std::this_thread::sleep_for(std::chrono::seconds(60));
+    server.stop();
 
     return 0;
 }
