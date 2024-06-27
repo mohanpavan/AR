@@ -10,7 +10,7 @@ int main()
     const ConfigReader config("config.ini");
 
     int port = 8080;
-    double frequency = .1F;
+    double frequency = 1.F;
     size_t buf_size = 1024;
     std::string value;
 

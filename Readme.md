@@ -1,6 +1,15 @@
-docker build . -t udp:0.1
+# Running
 
-docker run --net=host -it udp:0.1
+```bash
+docker compose build
+docker compose up
+```
+
+# development
+```bash
+docker build -t udp .
+docker run --net=host -it udp
+
 # server
 cd ./build/bin/
 ./server
@@ -8,3 +17,4 @@ cd ./build/bin/
 # client
 cd ./build/bin
 ./client
+```

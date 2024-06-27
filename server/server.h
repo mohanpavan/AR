@@ -6,6 +6,7 @@
 #include <functional>
 #include <string>
 #include <thread>
+#include <position_message.h>
 
 class Server
 {
@@ -29,6 +30,7 @@ private:
     CallbackType m_callback;
     std::thread m_server_thread;
     bool m_running;
+    PositionMessage m_message;
 };
 
 #endif // AR_SERVER_H
