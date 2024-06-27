@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     const ConfigReader config("config.ini");
 
     int port=8080;
-    double frequency = 10;
+    double frequency = 1.F;
     size_t buf_size = 1024;
     std::string server_ip = "127.0.0.1";
     std::string value;
