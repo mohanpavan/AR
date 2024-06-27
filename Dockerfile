@@ -10,8 +10,12 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     cmake \
     g++
 
-COPY . /udp
-
 WORKDIR /udp
 
+COPY . .
+
 RUN cmake -S . -B build && cmake --build build && cmake --install build
+
+WORKDIR ./build/bin
+
+CMD ["sh", "-c", "./server"]

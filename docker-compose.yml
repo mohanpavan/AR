@@ -5,20 +5,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: server
     container_name: server_container
-    ports:
-      - "8080:8080"  # Expose port 8080 for the server
-    command: ["/server/server"]  # Specify the command to run the server
+    network_mode: host
+    command: ["sh", "-c", "./server"]
 
   client:
     build:
       context: .
       dockerfile: Dockerfile
-      target: client
     container_name: client_container
-    ports:
-      - "8080:8080"  # Expose port 8081 for the client if needed
+    network_mode: host
     depends_on:
-      - server  # Ensure the server starts before the client
-    command: ["/client/client"]  # Specify the command to run the client
+      - server
+    command: ["sh", "-c", "./client"]
